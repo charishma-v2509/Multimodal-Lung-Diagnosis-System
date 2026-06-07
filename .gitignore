@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Model files (optional)
+*.pth
+*.pkl
+*.joblib
+
+# Uploads / Runtime Data
+backend/uploads/
+
+# React
+node_modules/
+build/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

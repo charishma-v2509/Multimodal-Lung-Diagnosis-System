@@ -1,0 +1,223 @@
+.review-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.bg-warning-light { background-color: rgba(245, 158, 11, 0.1); }
+.text-warning { color: var(--warning); }
+.text-danger { color: var(--danger); }
+.text-primary { color: var(--primary); }
+
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 992px) {
+  .review-grid {
+    grid-template-columns: 1.5fr 1fr;
+    align-items: start;
+  }
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-content {
+  padding: 1.25rem;
+  background-color: var(--background);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.symptoms-text {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--border);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.image-comparison {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .image-comparison {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.image-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.image-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.radiograph {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  filter: contrast(1.2);
+}
+
+/* Heatmap simulation overlay */
+.heatmap-overlay {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--primary);
+}
+
+.heatmap-overlay .radiograph {
+  border: none;
+  border-radius: 0;
+}
+
+.heatmap-gradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 60%, rgba(255, 0, 0, 0.4) 0%, rgba(255, 255, 0, 0.2) 20%, transparent 40%);
+  mix-blend-mode: multiply;
+}
+
+.heatmap-hotspot {
+  position: absolute;
+  top: 55%;
+  left: 65%;
+  width: 20%;
+  height: 20%;
+  border-radius: 50%;
+  border: 2px dashed rgba(239, 68, 68, 0.8);
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0% { transform: scale(0.9); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+  100% { transform: scale(0.9); opacity: 1; }
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* AI Card */
+.ai-card {
+  padding: 0;
+  background-color: var(--text-main);
+  color: white;
+  border: none;
+}
+
+.ai-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ai-header h3 {
+  color: white;
+  margin: 0;
+}
+
+.ai-content {
+  padding: 1.5rem;
+}
+
+.text-sm { font-size: 0.875rem; }
+.text-2xl { font-size: 2rem; font-weight: 700; color: white !important; }
+.uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
+.fw-600 { font-weight: 600; }
+.text-right { text-align: right; }
+
+.probability-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.probability-bar-container.mini {
+  height: 4px;
+}
+
+.probability-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+.probability-high { background-color: var(--danger); box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+.probability-med { background-color: var(--warning); }
+.probability-low { background-color: var(--success); }
+
+.diag-item {
+  margin-bottom: 1rem;
+}
+
+.diag-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.box-alert {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.box-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-left: 4px solid var(--warning);
+  color: #fcd34d;
+}
+
+.findings-list {
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.findings-list li {
+  margin-bottom: 0.25rem;
+}

@@ -1,0 +1,15 @@
+numpy==1.26.4
+scikit-learn==1.6.1
+sentence-transformers==5.2.3
+torch==2.10.0
+transformers==4.47.1
+fastapi
+uvicorn
+motor
+python-jose[cryptography]
+passlib
+bcrypt==3.2.2
+email-validator
+python-multipart
+pydantic
+pydantic[email]
