@@ -1,6 +1,12 @@
 # 🩺 Multimodal Medical Diagnosis Assistant
 
-> An end-to-end multimodal ML web application that fuses **clinical images, patient vitals, symptom data, and text reports** into a unified deep learning pipeline to assist in medical diagnosis.
+An end-to-end multimodal ML web application that fuses **clinical images, patient vitals, symptom data, and text reports** into a unified deep learning pipeline to assist in medical diagnosis.
+
+## Why multimodal?
+
+Most medical AI tools work on a single data type — just images, or just vitals. Real clinical diagnosis combines multiple signals. This system tackles the harder problem: **late-stage multimodal fusion** using a Transformer that learns to weigh each input modality dynamically.
+
+This is an active research direction in clinical AI, and this project implements it end-to-end.
 
 ---
 
