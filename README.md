@@ -1,25 +1,95 @@
-# 🩺 Multimodal Medical Diagnosis Assistant
+# 🩺 Multimodal Lung Diagnosis System
 
-An end-to-end multimodal ML web application that fuses **clinical images, patient vitals, symptom data, and text reports** into a unified deep learning pipeline to assist in medical diagnosis.
-
-## Why multimodal?
-
-Most medical AI tools work on a single data type — just images, or just vitals. Real clinical diagnosis combines multiple signals. This system tackles the harder problem: **late-stage multimodal fusion** using a Transformer that learns to weigh each input modality dynamically.
-
-This is an active research direction in clinical AI, and this project implements it end-to-end.
+> A full-stack AI-powered clinical decision support platform that fuses chest X-rays, patient vitals, symptoms, and clinical text into a unified deep learning pipeline — with separate role-based interfaces for patients and doctors.
 
 ---
 
-## 🔍 What It Does
+## 🔍 Problem It Solves
 
-This system mimics how a real clinician reasons — by combining *multiple sources of evidence* simultaneously rather than relying on a single data type.
+Most medical AI tools work on a single input — just an X-ray, or just symptoms. Real clinical diagnosis is multimodal: a doctor looks at imaging, reads lab reports, checks vitals, and listens to the patient at the same time.
 
-- 📋 **Symptom Analysis** — Severity scoring via a trained sklearn classifier
-- 🖼️ **Medical Image Inference** — CNN-based image model trained on dual medical datasets (~347 MB, ResNet/VGG backbone)
-- 📝 **Clinical Text Understanding** — Text report model using NLP-based feature extraction
-- ⚡ **Fusion Prediction** — Transformer-based fusion model that integrates all modalities for a final clinical outcome prediction
+This system replicates that reasoning:
+- Patients submit symptoms, vitals, and chest X-rays through a self-service portal
+- A 4-model fusion pipeline analyzes all inputs simultaneously
+- Doctors receive AI-generated differential diagnoses with heatmap visualizations and confidence scores
+- The doctor reviews, writes a clinical assessment, and finalizes the report
 
-**Why this matters:** Most medical AI tools work on a single modality (just images or just vitals). This project tackles the harder, more realistic problem of *multimodal fusion* — which is an active area of research in clinical AI.
+---
+
+## 🖼️ Screenshots
+
+### Landing Page
+![Landing Page](screenshots/landing.png)
+
+### Patient Dashboard — Start Diagnosis
+![Patient Home](screenshots/patient-home.png)
+
+### Patient Result — AI Analysis Complete
+![Patient Result](screenshots/patient-result.png)
+
+### Doctor Case Review — AI Differential Diagnosis + X-Ray Heatmap
+![Doctor Review](screenshots/doctor-review.png)
+
+### Doctor Dashboard — Manage Patient Cases
+![Doctor Dashboard](screenshots/doctor-home.png)
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|---|---|
+| 🔐 Role-Based Auth | Separate login flows for Patient and Doctor roles (JWT) |
+| 🖼️ X-Ray Upload | Patients upload chest X-rays; AI runs image classification |
+| 🌡️ Vitals + Symptoms | Clinical indicators fed into separate ML models |
+| 🧠 AI Heatmap | Grad-CAM style heatmap overlaid on X-ray showing disease-relevant regions |
+| 📊 Differential Diagnosis | Primary diagnosis with confidence %, plus ranked alternative conditions |
+| 👨‍⚕️ Doctor Review Panel | Doctor sees all patient data, AI findings, and writes clinical assessment |
+| 📄 PDF Report Download | AI analysis report downloadable as PDF |
+| 📨 Send to Doctor | Patient can forward AI report to selected doctor for review |
+
+---
+
+## 🏗️ System Architecture
+
+```
+Patient (Symptoms + Vitals + X-Ray)
+              │
+              ▼
+     React + Vite Frontend
+              │  JWT Auth  │  Axios API calls
+              ▼
+        FastAPI Backend
+              │
+    ┌─────────┴──────────────────────┐
+    │     4-Model Fusion Pipeline     │
+    ├─────────────────────────────────┤
+    │  Model 1: Image CNN             │  ← Swin Transformer / ResNet on X-ray
+    │  Model 2: Text Classifier       │  ← Sentence-BERT on clinical text
+    │  Model 3: Symptom Severity      │  ← Sklearn on symptom features
+    │  Model 4: Transformer Fusion    │  ← Cross-modal attention fusion
+    └─────────┬───────────────────────┘
+              │
+              ▼
+    Unified Prediction Output
+    (Primary diagnosis + confidence + heatmap)
+              │
+              ▼
+      Doctor Review Interface
+```
+
+---
+
+## 📈 Model Performance
+
+| Model | Metric | Score |
+|---|---|---|
+| Image Model (Swin Transformer) | ROC-AUC | **0.97** |
+| Text Classification Model | Accuracy | **95%** |
+| Multimodal Fusion Model | Multi-label classification | Trained on NIH + CheXpert datasets |
+| Symptom Severity Model | Sklearn classifier | Sklearn 1.6.1 |
+
+These results were validated on a 30-row clinically realistic evaluation dataset built from NIH ChestX-ray14 and CheXpert (via Kaggle).
 
 ---
 
@@ -27,66 +97,61 @@ This system mimics how a real clinician reasons — by combining *multiple sourc
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | React + Vite |
-| **Backend** | FastAPI (Python) |
-| **ML Models** | PyTorch (CNN + Transformer), Scikit-learn |
-| **Model Serving** | Custom inference pipeline via FastAPI endpoints |
-| **Evaluation** | Custom fusion evaluation script with accuracy metrics |
+| Frontend | React.js, Vite, CSS |
+| Backend | Python, FastAPI, JWT Auth |
+| ML — Image | PyTorch, Swin Transformer, ResNet |
+| ML — Text | Sentence-BERT, Scikit-learn |
+| ML — Fusion | PyTorch Transformer (cross-modal attention) |
+| Evaluation | Custom `evaluate_fusion.py` pipeline |
+| Data | NIH ChestX-ray14, CheXpert (Kaggle) |
 
 ---
 
-## 🏗️ Architecture
+## 👤 Two User Roles
 
-```
-multimodal/
-├── backend/                    # FastAPI Python backend
-│   ├── ml/                     # Inference and prediction logic
-│   └── models/                 # Trained model files (PTH, Joblib) — git-ignored
-├── frontend/                   # React + Vite frontend
-├── evaluate_fusion.py          # Fusion model evaluation script
-└── README.md
-```
+### Patient Flow
+1. Register → Login as Patient
+2. Upload chest X-ray + enter symptoms and vitals
+3. Receive AI analysis: severity level, possible condition, AI explanation
+4. Download PDF report or send to a doctor for review
 
-**ML Model Overview:**
-
-| Model File | Type | Size | Purpose |
-|---|---|---|---|
-| `ImageModelBothDatasets.pth` | PyTorch CNN | ~347 MB | Medical image classification |
-| `final_transformer_model.pth` | PyTorch Transformer | ~28.5 MB | Multimodal fusion |
-| `symptom_severity_model_sklearn161.joblib` | Scikit-learn | — | Symptom severity scoring |
-| `text_model.joblib` | Scikit-learn | — | Clinical text analysis |
+### Doctor Flow
+1. Register → Login as Doctor
+2. Dashboard shows all pending patient cases
+3. Open a case: see patient symptoms, original X-ray, AI heatmap, differential diagnosis with confidence scores
+4. Write clinical assessment and finalize the report
 
 ---
 
 ## ⚠️ Model Setup (Required Before Running)
 
-The trained model files exceed GitHub's file size limit and are hosted on Google Drive.
+Model files exceed GitHub's size limit and are hosted on Google Drive.
 
-**Step 1:** Download all model files from Google Drive:
-👉 [Google Drive — Model Files](https://drive.google.com/drive/u/0/folders/1GI4wy4oP_a75VNr-hlvSHxZGiHVdOQqr)
+**Step 1** — Download from Google Drive:
+👉 [Model Files — Google Drive](https://drive.google.com/drive/u/0/folders/1GI4wy4oP_a75VNr-hlvSHxZGiHVdOQqr)
 
-**Step 2:** Place all downloaded files inside `backend/models/`:
-
+**Step 2** — Place inside `backend/models/`:
 ```
 backend/models/
-├── ImageModelBothDatasets.pth
-├── final_transformer_model.pth
+├── ImageModelBothDatasets.pth              # ~347 MB — Swin Transformer image model
+├── final_transformer_model.pth             # ~28.5 MB — Fusion model
 ├── symptom_severity_model_sklearn161.joblib
 ├── symptom_severity_model_metadata_sklearn161.joblib
 └── text_model.joblib
 ```
 
-> `*.pth` and `*.joblib` files are excluded via `.gitignore` to keep the repo lightweight.
-
 ---
 
-## 🚀 Local Setup
+## ⚙️ Local Setup
+
+### Prerequisites
+- Python 3.9+
+- Node.js 16+
+- Downloaded model files (see above)
 
 ### Backend
-
 ```bash
 cd backend
-
 python -m venv venv
 
 # Windows
@@ -97,47 +162,55 @@ source venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
-
-Backend runs at → `http://127.0.0.1:8000`
+Backend: `http://127.0.0.1:8000`
 
 ### Frontend
-
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-Frontend runs at → `http://localhost:5173`
+Frontend: `http://localhost:5173`
 
 ---
 
-## 📊 Evaluation
-
-Run the fusion model evaluation to reproduce accuracy results:
+## 📊 Running the Evaluation Pipeline
 
 ```bash
-# Activate your virtual environment first
+# Activate virtual environment first
 python evaluate_fusion.py
 ```
 
-This script runs inference across all modalities and reports combined prediction accuracy on the test set.
+Runs inference across all 4 modalities on the 30-row evaluation dataset and reports fusion accuracy metrics.
 
 ---
 
-## 💡 Key Technical Highlights
+## 💡 What Makes This Technically Significant
 
-- **Dual-dataset image model** — trained on two separate medical imaging datasets for better generalization
-- **Transformer-based fusion** — cross-modal attention to weigh evidence from each input type dynamically
-- **Sklearn versioning** — models saved and loaded with explicit sklearn version pinning (`sklearn161`) to avoid deserialization issues
-- **Separation of concerns** — ML inference logic is cleanly isolated in `backend/ml/` for easy model swapping or retraining
-
----
-
-## 🎯 Use Case
-
-Designed as a **clinical decision support tool** — not a replacement for a physician, but a second-opinion assistant that surfaces risk signals from heterogeneous patient data in one unified interface.
+- **Multimodal fusion** — not just image classification; fuses 4 heterogeneous data types using cross-modal attention
+- **Dual-dataset image model** — trained on both NIH ChestX-ray14 and CheXpert for better generalization across imaging conditions
+- **Grad-CAM heatmap** — visually explains which lung regions drove the AI's prediction, making the system interpretable for doctors
+- **Role-based clinical workflow** — patient and doctor interfaces are fully separated with JWT authentication, mirroring real hospital system architecture
+- **Evaluated on realistic data** — 30-row test dataset built from actual NIH/CheXpert cases with binary ground-truth labels
 
 ---
 
-*Built as a final-year B.Tech project in AI & ML.*
+## 📁 Project Structure
+
+```
+Multimodal-Lung-Diagnosis-System/
+├── backend/
+│   ├── ml/                    # Model inference logic
+│   ├── models/                # Trained model files (git-ignored)
+│   ├── routers/               # FastAPI route handlers
+│   └── main.py
+├── frontend/
+│   └── src/
+│       ├── pages/             # Patient and Doctor page components
+│       ├── components/        # Shared UI components
+│       └── api/               # Axios API layer
+├── evaluate_fusion.py         # Evaluation pipeline
+├── fusion_evaluation_dataset.csv
+└── fusion_results.csv
+```
+
